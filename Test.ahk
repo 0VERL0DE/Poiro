@@ -1,8 +1,8 @@
 
 ; this is example.ahk
-#Include %A_ScriptDir%\64bit\Native.ahk
-#Include %A_ScriptDir%\64bit\github.ahk
-#Include %A_ScriptDir%\64bit\auto_update.ahk
+#Include <Native>
+#Include <github>
+#Include <auto_update>
 
 ;necessary files can be found here: https://github.com/samfisherirl/Auto-Update.ahk-AHK-v2-easily-update-ahk-apps-remotely
 
@@ -21,7 +21,7 @@ This solution does the following:
 Try, Catch need to be implimented as a code feature (I dont self-referentially update for you so make sure to check the github  for updates ;)
 
 */
-myApp := defineApp("samfisherirl", "Github.ahk")
+myApp := defineApp("samfisherirl", "test.ahk")
 ; this example refers to my repo http://github.com/samfisherirl/github.ahk
 
 path_of_app := A_MyDocuments "\github.ahk"
