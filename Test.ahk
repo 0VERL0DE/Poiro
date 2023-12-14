@@ -1,47 +1,45 @@
 
-; this is example.ahk
-#Include <Native>
-#Include <github>
-#Include <auto_update>
+; original: https://github.com/samfisherirl/Auto-Update.ahk-AHK-v2-easily-update-ahk-apps-remotely
+#requires Autohotkey v2
 
-;necessary files can be found here: https://github.com/samfisherirl/Auto-Update.ahk-AHK-v2-easily-update-ahk-apps-remotely
+#include <App>
+;#Include <CSV_v2>
+#SingleInstance Force
 
-/*
-This solution does the following:
-- Takes settings for an app (likely for public release) that needs remote updates, ill use "github.ahk" as an example.
-- Github's API returns release Tag (version), download url, and release updates
-- Library connects to the github API and stores version data in a local json temp file
-- Everytime the function calls are made in the example the json files is imported and github API redownloads the latest version data
-- If version doesn't match local version, a download prompt is offered (customizable)
-- 7zip command line utility invokes extraction of the release and overwrites the existing application path set by the user
-- Version data is stored for future use
 
- keep in mind this works but may have an error or two upon various use cases and if reported, I will fix asap.
+; create a new App object for storing versioning info and properties
+myApp := App("0VERL0DE", "Poiro")   ; refers to https://github.com/0VERL0DE/Poiro, 
 
-Try, Catch need to be implimented as a code feature (I dont self-referentially update for you so make sure to check the github  for updates ;)
 
-*/
-myApp := defineApp("samfisherirl", "test.ahk")
-; this example refers to my repo http://github.com/samfisherirl/github.ahk
+;register function for error handling
+;OnError(myApp.PrintCallStack)
 
-path_of_app := A_MyDocuments "\github.ahk"
-; set where my application is stored on the local computer
+; set target path for App installation
+myApp.SetInstallPath(A_Appdata "\Poiro")
 
-myApp.setPath(path_of_app)
+; set target path for Log file
+myApp.setLogPath(A_Appdata "\Poiro")
 
-myApp.connectGithubAPI()
+; Update app object with latest info from Github
+myApp.GetGitInfo()
 
-update := myApp.checkforUpdate()
 
-if (update) {
-    msg := update["repo"] . " version number " . update["version"] . " needs an update. Release notes include:`n" . update["releaseNotes"]
-    Msgbox(msg)
+; Check local version
+oUpdateInfo := myApp.VersionCheck()
 
+; update
+if (oUpdateInfo) {
+    sUpdateNotification := oUpdateInfo["repo"] . oUpdateInfo["localversion"] . " needs an update.`nRelease notes: " . oUpdateInfo["releaseNotes"]
+    ; Option to update/cancel
+    Msgbox(sUpdateNotification)
+
+    ; update this app
     myApp.update()
-    ;gets file from repo, if zip/7zip, extract
-    ;then overwrite existing app
-    ;updates log
+} Else {
+
+    Msgbox "no update needed"
 }
-else {
-    msgbox("You're up to date!")
-}
+
+
+return
+
