@@ -3,17 +3,23 @@
 
 #include <App>
 
+
 ; create a new App object for storing versioning and properties
-myApp := App("0VERL0DE", "POIRO")   ; refers to https://github.com/0VERL0DE/Poiro
+myApp := App("0VERL0DE", "POIRO")
 
-    myApp.SetInstallPath(A_Appdata "\POIRO")
+myApp.SetInstallPath(A_Appdata "\POIRO")
+myApp.Version := "0.0.2"
 
-    ; Pull data from Github and update this app object
+
+
+MyApp.CheckForUpdate()
+
+/*
     myApp.GetGitInfo()
 
-    ; Check local version (JSON) against remote (latest RELEASE on Github)
-    oUpdateInfo := myApp.VersionCheck()
 
+   ; Check local version (JSON) against remote (latest RELEASE on Github)
+    oUpdateInfo := myApp.VersionCheck()
 
     ; update
     if (oUpdateInfo) {
@@ -29,7 +35,7 @@ myApp := App("0VERL0DE", "POIRO")   ; refers to https://github.com/0VERL0DE/Poir
         Msgbox "no update needed"
     }
 
-
+*/
 
 
 
@@ -67,7 +73,7 @@ myApp := App("0VERL0DE", "POIRO")   ; refers to https://github.com/0VERL0DE/Poir
         ; Initialize variables
         global iMonitorCount := MonitorGetCount()
     
-        iClockWidth := 55
+        iClockWidth := 54
         iClockHeight := 40
         sStartSize := "11 Bold"
     
