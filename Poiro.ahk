@@ -4,50 +4,29 @@
 #include <App>
 
 
-; create a new App object for storing versioning and properties
-myApp := App("0VERL0DE", "POIRO")
+; added clock functionality
+; added Settings menu
+; fixed hover triggere  over settings
+
+
+; create a new App object for syncing with Github
+
+global myApp := App("0VERL0DE", "POIRO")
 
 myApp.SetInstallPath(A_Appdata "\POIRO")
-myApp.Version := "0.0.2"
+myApp.Version := "v0.0.2"
+myApp.FriendlyName := "POIRO"
 
+
+MyApp.GetGitInfo()
 
 
 MyApp.CheckForUpdate()
-
-/*
-    myApp.GetGitInfo()
-
-
-   ; Check local version (JSON) against remote (latest RELEASE on Github)
-    oUpdateInfo := myApp.VersionCheck()
-
-    ; update
-    if (oUpdateInfo) {
-        sUpdateNotification := oUpdateInfo["repo"] . oUpdateInfo["localversion"] . " needs an update.`nRelease notes: " . oUpdateInfo["releaseNotes"]
-        ; Option to update/cancel
-        Msgbox(sUpdateNotification)
-
-        ; update this app
-        myApp.update()
-        
-    } Else {
-
-        Msgbox "no update needed"
-    }
-
-*/
-
 
 
 
     ;DetectHiddenWindows(false)
     ;DetectHiddenText(false)
-    
-    ; If FileExist(tempdir "/config.ini"){
-    
-    ; }Else{
-    
-    ; }
     
         Display_ResetWorkArea()
         Display_GetInfo()    
@@ -84,7 +63,7 @@ MyApp.CheckForUpdate()
     
         ; Create context menu, duplicated on every screen
         oClockMenu := Menu()
-        oClockMenu.Add("Task Manager", MenuChoice)
+        ;oClockMenu.Add("Task Manager", MenuChoice)
         oClockMenu.Add("Settings", MenuChoice)
         oClockMenu.Add("Reload", MenuChoice)
         oClockMenu.Add("Exit", MenuChoice)
@@ -178,7 +157,12 @@ MyApp.CheckForUpdate()
     
                 For sControlHandle, oTextControl in mControls {
                     {
-                    oTextControl.Text := sCPUTime
+                    ; sometimes control is destroyed when PC sleeps/switches screens
+                        Try {
+                            oTextControl.Text := sCPUTime
+                        } Catch {
+                            Display_StartClock()
+                        }
                     }
                 }
     
@@ -209,7 +193,7 @@ MyApp.CheckForUpdate()
                 case "Exit":
                     ExitApp(0)
                 case "Settings":
-                    OutputDebug("`"show settings`"")
+                    ShowSettingsMenu()
                 return
             }
         }
@@ -237,20 +221,21 @@ MyApp.CheckForUpdate()
     
             ; Stop listening for mousemove on gui - mouse already in gui
             HoverListenerState(0)
-    
-            ToolTip DateTimeInfo(), , ,1
-    
+        
             ; start monitoring when cursor leaves again
             SetTimer(CheckIfHovering,500)
             return
     
+
             ; subroutine that checks every 500 ms if cursor is over clock
             CheckIfHovering()
             { 
-                MouseGetPos(, , &ActiveWindow)
+                MouseGetPos(&XPos,&YPos , &ActiveWindow)
                 ; cursor is over one of the registered guis
-                If mClocks.Has(ActiveWindow){
+                If mClocks.Has(ActiveWindow) {
                     ToolTip DateTimeInfo(), , , 1
+
+
                 ; cursor left GUI
                 }Else{
                     ToolTip , , ,1
@@ -258,7 +243,7 @@ MyApp.CheckForUpdate()
                     HoverListenerState(1)                   ; Reactivate the GUI hover trigger
                 }
             }
-    
+
             ; subroutine that shows the date on hover
             DateTimeInfo(){   
     
@@ -543,11 +528,37 @@ MyApp.CheckForUpdate()
         Return( WinSetOwner(Hwnd) = hOwner )
     }
    
-   
 
 
+ShowSettingsMenu(){
 
+    myGui := Gui()
+    Tab := myGui.Add("Tab3", "x0 y0 w631 h420", ["Settings", "About"])
+    Tab.UseTab(2)
+    myGui.Add("GroupBox", "x8 y24 w298 h389", "App Info")
+    myGui.Add("Text", "x16 y48 w120 h23 +0x200", "App Name")
+    myGui.Add("Text", "x16 y72 w120 h23 +0x200", "Local version")
+    myGui.Add("GroupBox", "x312 y24 w298 h145", "System info")
+    myGui.Add("Text", "x320 y48 w120 h23 +0x200", myApp.GetHumanName()["FirstName"] " " myApp.GetHumanName()["LastName"])
+    ButtonUpdate := myGui.Add("Button", "x16 y384 w80 h23", "Update")
+    myGui.Add("Text", "x144 y48 w120 h23 +0x200", myApp.FriendlyName)
+    myGui.Add("Text", "x144 y72 w120 h23 +0x200", myApp.Version)
+    myGui.Add("Text", "x16 y96 w120 h23 +0x200", "Latest version")
+    myGui.Add("Text", "x144 y96 w120 h23 +0x200", myApp.Remoteversion)
+    myGui.Add("Text", "x320 y72 w120 h23 +0x200", "Internet Connection")
+    Tab.UseTab()
 
-;   #Include <INI>
+    ButtonUpdate.OnEvent("Click", OnEventHandler)
+    myGui.OnEvent('Close', (*) => ExitApp())
+    myGui.Title := "Settings"
+    myGui.Show("w620 h420")
 
+    OnEventHandler(*)
+    {
+        ToolTip("Click! This is a sample action.`n"
+        . "Active GUI element values include:`n"  
+        . "ButtonUpdate => " ButtonUpdate.Text "`n", 77, 277)
+        SetTimer () => ToolTip(), -3000 ; tooltip timer
+    }
 
+}
