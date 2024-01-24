@@ -20,17 +20,10 @@ global myApp := App("0VERL0DE", "POIRO")
 myApp.appPath :=            A_Appdata "\POIRO"
 myApp.logPath :=            myApp.appPath "\VersionInfo.json"
 myApp.iniPath :=            myApp.appPath "\config.ini"
-myApp.Version :=            "v0.0.2"
 myApp.FriendlyName :=       "POIRO"
 
 
 MyApp.GetGitInfo()
-
-oINI := INI.GetINi(A_WorkingDir "\Config.ini")
-oINI["GIT info"]:= {localversion :myApp.Version}
-
-
-oINI.Writefile()
 
 
 IsUpdated := MyApp.CheckForUpdate()
