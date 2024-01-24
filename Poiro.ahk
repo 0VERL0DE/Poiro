@@ -537,15 +537,17 @@ ShowSettingsMenu(){
     Tab.UseTab(2)
     myGui.Add("GroupBox", "x8 y24 w298 h389", "App Info")
     myGui.Add("Text", "x16 y48 w120 h23 +0x200", "App Name")
-    myGui.Add("Text", "x16 y72 w120 h23 +0x200", "Local version")
-    myGui.Add("GroupBox", "x312 y24 w298 h145", "System info")
-    myGui.Add("Text", "x320 y48 w120 h23 +0x200", myApp.GetHumanName()["FirstName"] " " myApp.GetHumanName()["LastName"])
-    ButtonUpdate := myGui.Add("Button", "x16 y384 w80 h23", "Update")
     myGui.Add("Text", "x144 y48 w120 h23 +0x200", myApp.FriendlyName)
+    myGui.Add("Text", "x16 y72 w120 h23 +0x200", "Local version")
     myGui.Add("Text", "x144 y72 w120 h23 +0x200", myApp.Version)
     myGui.Add("Text", "x16 y96 w120 h23 +0x200", "Latest version")
-    myGui.Add("Text", "x144 y96 w120 h23 +0x200", myApp.Remoteversion)
-    myGui.Add("Text", "x320 y72 w120 h23 +0x200", "Internet Connection")
+    myGui.Add("Text", "x144 y96 w120 h23 +0x200", myApp.Remoteversion)    
+    
+    myGui.Add("GroupBox", "x312 y24 w298 h145", "System info")
+    myGui.Add("Text", "x320 y48 w200 h23 +0x200", "User name: " myApp.GetHumanName()["FirstName"] " " myApp.GetHumanName()["LastName"])
+    ButtonUpdate := myGui.Add("Button", "x16 y384 w80 h23", "Update")
+
+    myGui.Add("Text", "x320 y72 w120 h23 +0x200", "Internet Connection: ")
     Tab.UseTab()
 
     ButtonUpdate.OnEvent("Click", OnEventHandler)
