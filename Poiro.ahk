@@ -2,6 +2,7 @@
 #SingleInstance Force
 
 #include <App>
+#include <INI>
 
 
 ; added clock functionality
@@ -13,16 +14,26 @@
 
 global myApp := App("0VERL0DE", "POIRO")
 
-myApp.SetInstallPath(A_Appdata "\POIRO")
-myApp.Version := "v0.0.2"
-myApp.FriendlyName := "POIRO"
+
+;--
+
+myApp.appPath :=            A_Appdata "\POIRO"
+myApp.logPath :=            myApp.appPath "\VersionInfo.json"
+myApp.iniPath :=            myApp.appPath "\config.ini"
+myApp.Version :=            "v0.0.2"
+myApp.FriendlyName :=       "POIRO"
 
 
 MyApp.GetGitInfo()
 
+oINI := INI.GetINi(A_WorkingDir "\Config.ini")
+oINI["GIT info"]:= {localversion :myApp.Version}
 
-MyApp.CheckForUpdate()
 
+oINI.Writefile()
+
+
+IsUpdated := MyApp.CheckForUpdate()
 
 
     ;DetectHiddenWindows(false)
@@ -30,6 +41,9 @@ MyApp.CheckForUpdate()
     
         Display_ResetWorkArea()
         Display_GetInfo()    
+
+
+
         Display_StartClock(1)
     
     Return
@@ -365,7 +379,7 @@ MyApp.CheckForUpdate()
     
         Outputdebug MonitorTable
     
-    return
+    return MonitorTable
     }
     
     ; reset the work area to the default, with a taskbar of 40px
